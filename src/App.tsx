@@ -10,9 +10,75 @@ import { GroupedItems, Slide, WeddingFile } from './utils/types';
 import { TimelineItemModel } from 'react-chrono/dist/models/TimelineItemModel';
 
 function App() {
+  const [itemDisplay, setItemDisplay] = useState<'carousel' | 'grid'>(
+    'carousel'
+  );
+  const [filter, setFilter] = useState<'all' | 'pictures' | 'videos'>('all');
   const [files, setFiles] = useState<WeddingFile[]>([]);
   const [slides, setSlides] = useState<Slide[]>([]);
   const [timelineItems, setTimelineItems] = useState<TimelineItemModel[]>([]);
+  const [filteredFiles, setFilteredFiles] = useState<WeddingFile[]>([]);
+
+  useEffect(() => {
+    const filteredFiles = files.filter(({ name }) => {
+      if (filter === 'all') return true;
+      if (filter === 'pictures') return name.endsWith('png');
+      if (filter === 'videos') return !name.endsWith('png');
+      return false;
+    });
+    console.debug(
+      'filtering',
+      filter,
+      files.length,
+      filteredFiles.length,
+      filteredFiles.map((f) => f.name)
+    );
+    setFilteredFiles(filteredFiles);
+  }, [files, filter]);
+
+  useEffect(() => {
+    if (filteredFiles.length === 0) return;
+
+    const newSlides = filteredFiles.map((file) => {
+      return {
+        key: file.id,
+        content: file.id,
+      };
+    }) as Slide[];
+    setSlides(newSlides);
+
+    const newTimelineItems = filteredFiles.map((file) => {
+      const title = file.client_modified.split('T')[0];
+      return {
+        id: file.id,
+        title: title,
+        cardTitle: title,
+        url: '#',
+        cardSubtitle: title,
+        cardDetailedText: title,
+      };
+    }) as TimelineItemModel[];
+
+    setTimelineItems(newTimelineItems);
+
+    const initialValue: GroupedItems = {};
+
+    const reducedValues = filteredFiles.reduce(
+      (acc: GroupedItems, current: WeddingFile) => {
+        const date = new Date(current.client_modified);
+        const minute = Math.floor(date.getMinutes() / 20) * 20; // 20-minute interval
+        const hour = date.getHours();
+        const key = `${date.toISOString().split('T')[0]}${hour
+          .toString()
+          .padStart(2, '0')}${minute.toString().padStart(2, '0')}`;
+        acc[key] = (acc[key] || []).concat(current);
+        return acc;
+      },
+      initialValue
+    );
+
+    console.debug('reduced', reducedValues);
+  }, [filteredFiles]);
 
   useEffect(() => {
     if (files.length === 0) {
@@ -24,43 +90,6 @@ function App() {
           console.error(err);
           setFiles([]);
         });
-    } else {
-      const newSlides = files.map((file) => {
-        return {
-          key: file.id,
-          content: file.id,
-        };
-      }) as Slide[];
-      setSlides(newSlides);
-      const initialValue: GroupedItems = {};
-
-      console.debug(
-        'reduced',
-        files.reduce((acc: GroupedItems, current: WeddingFile) => {
-          const date = new Date(current.client_modified);
-          const minute = Math.floor(date.getMinutes() / 20) * 20; // 20-minute interval
-          const hour = date.getHours();
-          const key = `${date.toISOString().split('T')[0]}${hour
-            .toString()
-            .padStart(2, '0')}${minute.toString().padStart(2, '0')}`;
-          acc[key] = (acc[key] || []).concat(current);
-          return acc;
-        }, initialValue)
-      );
-
-      const newTimelineItems = files.map((file) => {
-        const title = file.client_modified.split('T')[0];
-        return {
-          id: file.id,
-          title: title,
-          cardTitle: title,
-          url: '#',
-          cardSubtitle: title,
-          cardDetailedText: title,
-        };
-      }) as TimelineItemModel[];
-
-      setTimelineItems(newTimelineItems);
     }
   }, [files]);
   return (
@@ -80,16 +109,43 @@ function App() {
               <code>{pkgVersion}</code>
             </pre>
           </h2>
-          <button className="hover:bg-blue-500 p-2 rounded">
+          <button
+            className="hover:bg-blue-500 p-2 rounded"
+            disabled={itemDisplay === 'carousel'}
+            onClick={() => setItemDisplay('carousel')}
+          >
             Carousel View
           </button>
-          <button className="hover:bg-blue-500 p-2 rounded">Grid View</button>
-          <button className="hover:bg-blue-500 p-2 rounded">Refresh</button>
+          <button
+            className="hover:bg-blue-500 p-2 rounded"
+            disabled={itemDisplay === 'grid'}
+            onClick={() => setItemDisplay('grid')}
+          >
+            Grid View
+          </button>
+          <button
+            className="hover:bg-blue-500 p-2 rounded"
+            onClick={() => setFiles([])}
+          >
+            Refresh
+          </button>
           <div>
-            <button className="hover:bg-blue-500 p-2 rounded">
+            <button
+              className="hover:bg-blue-500 p-2 rounded"
+              onClick={() => setFilter('all')}
+            >
+              All
+            </button>
+            <button
+              className="hover:bg-blue-500 p-2 rounded"
+              onClick={() => setFilter('pictures')}
+            >
               Only Pictures
             </button>
-            <button className="hover:bg-blue-500 p-2 rounded">
+            <button
+              className="hover:bg-blue-500 p-2 rounded"
+              onClick={() => setFilter('videos')}
+            >
               Only Videos
             </button>
           </div>
@@ -99,20 +155,26 @@ function App() {
           className="w-full h-full overflow-hidden relative"
         >
           <div className="h-full w-full overflow-y-scroll bg-slate-200">
-            <VerticalCarousel
-              className="h-2/3 w-full overflow-y-scroll"
-              slides={slides.length > 0 ? slides : []}
-              offsetRadius={2}
-              showNavigation={true}
-              config={config.gentle}
-            />
+            {itemDisplay === 'carousel' ? (
+              <VerticalCarousel
+                className="h-2/3 w-full overflow-y-scroll"
+                slides={slides.length > 0 ? slides : []}
+                offsetRadius={2}
+                showNavigation={true}
+                // config={config.gentle}
+              />
+            ) : (
+              <>
+                <p>Grid in progress</p>
+              </>
+            )}
           </div>
         </div>
         <div
           id="bottom-bar"
           className="w-full bg-blue-600 text-white tex-center"
         >
-          Bottom
+          {filteredFiles.length}/{files.length}
         </div>
       </div>
       {/* right Section */}
