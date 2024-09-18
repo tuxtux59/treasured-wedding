@@ -29,3 +29,7 @@ export type Slide = {
 export interface GroupedItems {
   [key: string]: WeddingFile[];
 }
+
+export interface ThumbnailCache {
+  [filePath: string]: string | ArrayBuffer | null;
+}

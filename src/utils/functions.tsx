@@ -1,4 +1,4 @@
-import { DpbxFile, WeddingFile } from './types';
+import { DpbxFile, ThumbnailCache, WeddingFile } from './types';
 
 export const getFiles = async () => {
   const url = 'https://api.dropboxapi.com/2/files/list_folder';
@@ -32,9 +32,13 @@ export const getFiles = async () => {
     });
 };
 
-const thumbnailsCache = {};
+const thumbnailsCache: ThumbnailCache = {};
 
 export const getThumbnails = (filePath: string, callback?: any) => {
+  if (thumbnailsCache[filePath]) {
+    callback(thumbnailsCache[filePath]);
+    return;
+  }
   const url = 'https://content.dropboxapi.com/2/files/get_thumbnail_v2';
   const params = {
     authorization: `Bearer ${process.env.REACT_APP_DPBX_TOKEN}`,
@@ -54,5 +58,17 @@ export const getThumbnails = (filePath: string, callback?: any) => {
   };
   return fetch(url + '?' + new URLSearchParams(params), {
     method: 'POST',
-  });
+  })
+    .then((d) => d.body)
+    .then((body) => new Response(body))
+    .then((res) => res.blob())
+    .then((blob) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        const readerResult = reader.result;
+        thumbnailsCache[filePath] = readerResult;
+        callback(readerResult);
+      };
+    });
 };

@@ -45,17 +45,7 @@ function Slide({
 
   const fetchData = useCallback(async () => {
     try {
-      console.log(content, 'content');
-      getThumbnails(content, () => setData)
-        .then((d) => d.body)
-        .then((body) => new Response(body))
-        .then((res) => res.blob())
-        .then((blob) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = () => setData(reader.result);
-        })
-        .catch((error) => console.error(error));
+      getThumbnails(content, setData);
     } catch (error) {
       console.error(error);
     }
