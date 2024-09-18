@@ -4,9 +4,30 @@ import './App.css';
 import { humanPakageName, pkgVersion } from './utils/generic';
 import VerticalCarousel from './components/carousel/VerticalCarousel';
 import { config } from 'react-spring';
+import { Chrono } from 'react-chrono';
 
 function App() {
-  console.debug(humanPakageName);
+  const items = [
+    {
+      title: 'May 1940',
+      cardTitle: 'Dunkirk',
+      url: 'http://www.history.com',
+      cardSubtitle:
+        'Men of the British Expeditionary Force (BEF) wade out to..',
+      cardDetailedText:
+        'Men of the British Expeditionary Force (BEF) wade out to..',
+    },
+    {
+      title: 'May 1941',
+      cardTitle: 'Dunkirk',
+      url: 'http://www.history.com',
+      cardSubtitle:
+        'Men of the British Expeditionary Force (BEF) wade out to..',
+      cardDetailedText:
+        'Men of the British Expeditionary Force (BEF) wade out to..',
+    },
+  ];
+
   return (
     <div className="App h-screen w-screen bg-gray-100 flex">
       {/* Left Section */}
@@ -28,6 +49,7 @@ function App() {
             Carousel View
           </button>
           <button className="hover:bg-blue-500 p-2 rounded">Grid View</button>
+          <button className="hover:bg-blue-500 p-2 rounded">Refresh</button>
           <div>
             <button className="hover:bg-blue-500 p-2 rounded">
               Only Pictures
@@ -42,25 +64,24 @@ function App() {
           className="w-full h-full overflow-hidden relative"
         >
           <div className="h-full w-full overflow-y-scroll bg-slate-200">
-            <div className="flex flex-col h-4/5 w-full items-center justify-center">
-              <VerticalCarousel
-                slides={[1, 2, 3, 4].map((k) => {
-                  return {
-                    key: k,
-                    content: (
-                      <img
-                        src="https://via.placeholder.com/150"
-                        alt="sample img"
-                        className="w-full h-auto object-cover rounded-lg shadow-md"
-                      />
-                    ),
-                  };
-                })}
-                offsetRadius={2}
-                showNavigation={true}
-                config={config.gentle}
-              />
-            </div>
+            <VerticalCarousel
+              className="h-2/3 w-full overflow-y-scroll"
+              slides={[1, 2, 3, 4].map((k) => {
+                return {
+                  key: k,
+                  content: (
+                    <img
+                      src="https://via.placeholder.com/150"
+                      alt="sample img"
+                      className="w-full h-auto object-cover rounded-lg shadow-md"
+                    />
+                  ),
+                };
+              })}
+              offsetRadius={2}
+              showNavigation={true}
+              config={config.gentle}
+            />
           </div>
         </div>
         <div
@@ -74,11 +95,14 @@ function App() {
       <div id="right-section" className="flex-grow h-full flex">
         {/* Scrollable Timeline */}
         <div className="w-full h-full flex items-center justify-center">
-          <div className="w-2/3 h-2/3 bg-gray-300 rounded-lg shadow-lg flex items-center justify-center">
-            <div className="space-y-8 text-center">
-              <div className="p-4 bg-white shadow rounded-lg">10h12</div>
-              <div className="p-4 bg-white shadow rounded-lg">20h42</div>
-              <div className="p-4 bg-white shadow rounded-lg">6 Oct</div>
+          <div className="h-full p-2 w-full items-center justify-center flex">
+            <div className="w-full h-full p-4 bg-gray-50 rounded-lg shadow-lg flex items-center justify-center">
+              <Chrono
+                items={items}
+                className="py-4 my-4"
+                mode="VERTICAL"
+                scrollable
+              />
             </div>
           </div>
         </div>
