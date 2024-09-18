@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { Spring, animated } from 'react-spring/renderprops';
 import { withGesture } from 'react-with-gesture';
+import { getThumbnails } from '../../utils/functions';
 
 const SlideContainer = styled.div`
   position: absolute;
@@ -37,9 +38,32 @@ function Slide({
   down,
   up,
 }) {
+  const [data, setData] = useState(null);
   const offsetFromMiddle = index - offsetRadius;
   const totalPresentables = 2 * offsetRadius + 1;
   const distanceFactor = 1 - Math.abs(offsetFromMiddle / (offsetRadius + 1));
+
+  const fetchData = useCallback(async () => {
+    try {
+      console.log(content, 'content');
+      getThumbnails(content, () => setData)
+        .then((d) => d.body)
+        .then((body) => new Response(body))
+        .then((res) => res.blob())
+        .then((blob) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = () => setData(reader.result);
+        })
+        .catch((error) => console.error(error));
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const offsetCardClick = (i) => {
     console.log(i);
@@ -91,7 +115,15 @@ function Slide({
           }}
         >
           <SlideCard onClick={() => moveSlide(offsetFromMiddle)}>
-            {content}
+            {data ? (
+              <img
+                src={data}
+                alt={content}
+                className="rounded border-white border-8"
+              />
+            ) : (
+              content
+            )}
           </SlideCard>
         </SlideContainer>
       )}

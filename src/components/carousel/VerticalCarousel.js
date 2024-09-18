@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from '@emotion/styled';
 import Slide from './Slide';
 import PropTypes from 'prop-types';
+import { getThumbnails } from '../../utils/functions';
 
 const Wrapper = styled.div`
   position: relative;
@@ -34,7 +35,7 @@ function mod(a, b) {
   return ((a % b) + b) % b;
 }
 
-class VerticalCarousel extends React.Component {
+class VerticalCarousel extends Component {
   state = {
     index: 0,
     goToSlide: null,
