@@ -2,6 +2,8 @@ import React from 'react';
 import './App.css';
 
 import { humanPakageName, pkgVersion } from './utils/generic';
+import VerticalCarousel from './components/carousel/VerticalCarousel';
+import { config } from 'react-spring';
 
 function App() {
   console.debug(humanPakageName);
@@ -39,16 +41,27 @@ function App() {
           id="items-section"
           className="w-full h-full overflow-hidden relative"
         >
-          <div className="h-full w-full overflow-y-scroll">
-            <div className="h-1/3 flex items-center justify-center">
-              <img
-                src="https://via.placeholder.com/150"
-                alt="sample img"
-                className="w-3/4 h-auto object-cover rounded-lg shadow-md"
+          <div className="h-full w-full overflow-y-scroll bg-slate-200">
+            <div className="flex flex-col h-4/5 w-full items-center justify-center">
+              <VerticalCarousel
+                slides={[1, 2, 3, 4].map((k) => {
+                  return {
+                    key: k,
+                    content: (
+                      <img
+                        src="https://via.placeholder.com/150"
+                        alt="sample img"
+                        className="w-full h-auto object-cover rounded-lg shadow-md"
+                      />
+                    ),
+                  };
+                })}
+                offsetRadius={2}
+                showNavigation={true}
+                config={config.gentle}
               />
             </div>
           </div>
-          Content
         </div>
         <div
           id="bottom-bar"
