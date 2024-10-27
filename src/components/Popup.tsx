@@ -40,14 +40,6 @@ const Popup = ({
     }
   }, [popupPath]);
 
-  const download = () => {
-    if (!tempFileLink) {
-      alert('sorry no link');
-      return;
-    }
-    window.location.href = tempFileLink;
-  };
-
   if (!contentType) return <></>;
 
   return (
@@ -59,19 +51,31 @@ const Popup = ({
       onClick={(event) => event?.stopPropagation()}
     >
       {contentType === 'picture' && (
-        <img src={popupContent} alt="Popup content" onClick={close} />
+        <img
+          src={tempFileLink ? tempFileLink : popupContent}
+          alt="Popup content"
+          style={{ maxHeight: '80%' }}
+          onClick={close}
+        />
       )}
       {contentType === 'video' && (
-        <video controls autoPlay playsInline width={'80%'} src={tempFileLink} />
+        <video
+          controls
+          autoPlay
+          playsInline
+          width={'80%'}
+          style={{ maxHeight: '80%' }}
+          src={tempFileLink}
+        />
       )}
 
       <p className="absolute top-2 mx-auto p-1 rounded text-white hover:text-gray-50 inline-flex items-center">
         {popupPath}
       </p>
       {popupPath !== undefined && popupPath.length > 0 && (
-        <button
+        <a
           className="absolute top-2 left-2 p-1 rounded text-white hover:text-gray-50 inline-flex items-center"
-          onClick={() => download()}
+          href={tempFileLink}
         >
           <svg
             className="w-6 h-6 text-white"
@@ -94,7 +98,7 @@ const Popup = ({
             />
           </svg>
           Download
-        </button>
+        </a>
       )}
       <button
         className="absolute top-2 right-2 p-1 rounded text-red-300 hover:text-gray-50 inline-flex items-center"
