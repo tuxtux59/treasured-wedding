@@ -1,5 +1,5 @@
-import React from 'react';
-import { retrieveFileLink } from '../utils/functions';
+import React, { useEffect, useRef, useState } from 'react';
+import { isImage, isVideo, retrieveFileLink } from '../utils/functions';
 
 type Props = {
   popupContent: string;
@@ -14,24 +14,41 @@ const Popup = ({
   setPopupPath,
   popupPath,
 }: Props) => {
+  const [contentType, setContentType] = useState<
+    'picture' | 'video' | undefined
+  >();
+  const [tempFileLink, setTempFileLink] = useState<string>();
   const close = () => {
     setPopupContent(null);
     setPopupPath(undefined);
   };
 
-  const download = () => {
+  useEffect(() => {
     if (!popupPath) {
-      alert('sorry no link');
+      setContentType(undefined);
       return;
     }
     retrieveFileLink(popupPath)
-      .then((data) => {
-        window.location.href = data;
+      .then((link) => {
+        setTempFileLink(link);
       })
       .catch((err) => alert(`Erreur de récupération: ${err}`));
+    if (isImage(popupPath)) {
+      setContentType('picture');
+    } else {
+      setContentType('video');
+    }
+  }, [popupPath]);
+
+  const download = () => {
+    if (!tempFileLink) {
+      alert('sorry no link');
+      return;
+    }
+    window.location.href = tempFileLink;
   };
 
-  console.debug('popupPath', popupPath);
+  if (!contentType) return <></>;
 
   return (
     <div
@@ -41,7 +58,16 @@ const Popup = ({
       style={{ zIndex: 80 }}
       onClick={(event) => event?.stopPropagation()}
     >
-      <img src={popupContent} alt="Popup content" onClick={close} />
+      {contentType === 'picture' && (
+        <img src={popupContent} alt="Popup content" onClick={close} />
+      )}
+      {contentType === 'video' && (
+        <video controls autoPlay playsInline width={'80%'} src={tempFileLink} />
+      )}
+
+      <p className="absolute top-2 mx-auto p-1 rounded text-white hover:text-gray-50 inline-flex items-center">
+        {popupPath}
+      </p>
       {popupPath !== undefined && popupPath.length > 0 && (
         <button
           className="absolute top-2 left-2 p-1 rounded text-white hover:text-gray-50 inline-flex items-center"

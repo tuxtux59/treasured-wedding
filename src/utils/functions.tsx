@@ -1,5 +1,12 @@
 import { DpbxFile, ThumbnailCache, WeddingFile } from './types';
 
+export const isImage = (path: string): boolean => {
+  return path.endsWith('png');
+};
+export const isVideo = (path: string): boolean => {
+  return !isImage(path);
+};
+
 export const getFiles = async () => {
   const url = 'https://api.dropboxapi.com/2/files/list_folder';
   return fetch(url, {

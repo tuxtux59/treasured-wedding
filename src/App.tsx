@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
-import { getFiles, retrieveFileLink } from './utils/functions';
+import {
+  getFiles,
+  isImage,
+  isVideo,
+  retrieveFileLink,
+} from './utils/functions';
 import { ItemFilter, WeddingFile } from './utils/types';
 import Sidebar from './components/Sidebar';
 import MainPanel from './components/MainPanel';
@@ -20,8 +25,8 @@ function App() {
       files.length > 0
         ? files.filter(({ name }) => {
             if (filter === 'all') return true;
-            if (filter === 'pictures') return name.endsWith('png');
-            if (filter === 'videos') return !name.endsWith('png');
+            if (filter === 'pictures') return isImage(name);
+            if (filter === 'videos') return isVideo(name);
             return false;
           })
         : [];

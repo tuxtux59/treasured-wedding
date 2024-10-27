@@ -86,8 +86,10 @@ function Slide({
   }
 
   const showPopup = () => {
-    setPopupContent(data);
-    setPopupPath(popupPath);
+    if (offsetFromMiddle == 0) {
+      setPopupContent(data);
+      setPopupPath(popupPath);
+    }
   };
 
   return (
