@@ -24,6 +24,7 @@ export type WeddingFile = Pick<
 export type Slide = {
   key: any;
   content: any;
+  path: any;
 };
 
 export interface GroupedItems {

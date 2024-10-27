@@ -67,6 +67,8 @@ class VerticalCarousel extends Component {
     showNavigation: PropTypes.bool,
     offsetRadius: PropTypes.number,
     animationConfig: PropTypes.object,
+    setPopupContent: PropTypes.any,
+    setPopupPath: PropTypes.any,
   };
 
   static defaultProps = {
@@ -114,7 +116,13 @@ class VerticalCarousel extends Component {
   }
 
   render() {
-    const { animationConfig, offsetRadius, showNavigation } = this.props;
+    const {
+      animationConfig,
+      offsetRadius,
+      showNavigation,
+      setPopupContent,
+      setPopupPath,
+    } = this.props;
 
     let navigationButtons = null;
     if (showNavigation) {
@@ -136,6 +144,9 @@ class VerticalCarousel extends Component {
               offsetRadius={this.clampOffsetRadius(offsetRadius)}
               index={presentableIndex}
               animationConfig={animationConfig}
+              setPopupContent={setPopupContent}
+              setPopupPath={setPopupPath}
+              popupPath={slide.path}
             />
           ))}
         </Wrapper>

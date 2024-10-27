@@ -37,6 +37,9 @@ function Slide({
   delta,
   down,
   up,
+  setPopupContent,
+  setPopupPath,
+  popupPath,
 }) {
   const [data, setData] = useState(null);
   const offsetFromMiddle = index - offsetRadius;
@@ -82,6 +85,11 @@ function Slide({
     translateY -= translateYoffset;
   }
 
+  const showPopup = () => {
+    setPopupContent(data);
+    setPopupPath(popupPath);
+  };
+
   return (
     <Spring
       to={{
@@ -107,6 +115,7 @@ function Slide({
                 alt={content}
                 title={content}
                 className="rounded border-white border-8"
+                onClick={showPopup}
               />
             ) : (
               content

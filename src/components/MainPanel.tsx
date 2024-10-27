@@ -11,9 +11,11 @@ type Props = {
   filter: ItemFilter;
   filteredFiles: WeddingFile[];
   showSidebar: boolean;
-  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
   setFiles: React.Dispatch<React.SetStateAction<WeddingFile[]>>;
   setFilter: React.Dispatch<React.SetStateAction<ItemFilter>>;
+  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+  setPopupContent: React.Dispatch<React.SetStateAction<string | null>>;
+  setPopupPath: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const MainPanel = ({
@@ -21,9 +23,11 @@ const MainPanel = ({
   filter,
   filteredFiles,
   showSidebar,
-  setShowSidebar,
   setFiles,
   setFilter,
+  setShowSidebar,
+  setPopupContent,
+  setPopupPath,
 }: Props) => {
   const [itemDisplay, setItemDisplay] = useState<ItemDisplay>('carousel');
   const [slides, setSlides] = useState<Slide[]>([]);
@@ -46,6 +50,7 @@ const MainPanel = ({
       return {
         key: file.id,
         content: file.id,
+        path: file.path_display,
       };
     }) as Slide[];
     setSlides(newSlides);
@@ -73,6 +78,8 @@ const MainPanel = ({
                 slides={slides.length > 0 ? slides : []}
                 offsetRadius={2}
                 showNavigation={true}
+                setPopupContent={setPopupContent}
+                setPopupPath={setPopupPath}
               />
             ) : (
               <div
@@ -85,7 +92,12 @@ const MainPanel = ({
                     currentPage * PER_PAGE + PER_PAGE
                   )
                   .map((im) => (
-                    <GridItem key={im.id} {...im} />
+                    <GridItem
+                      key={im.id}
+                      {...im}
+                      setPopupContent={setPopupContent}
+                      setPopupPath={setPopupPath}
+                    />
                   ))}
               </div>
             )}

@@ -76,3 +76,19 @@ export const getThumbnails = (filePath: string, callback?: any) => {
     console.error(error);
   }
 };
+
+export const retrieveFileLink = async (dropboxPath: string) => {
+  return fetch('https://api.dropboxapi.com/2/files/get_temporary_link', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.REACT_APP_DPBX_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      path: dropboxPath,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => data.link)
+    .catch((error) => console.error('Erreur :', error));
+};
