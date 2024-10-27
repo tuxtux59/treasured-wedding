@@ -52,7 +52,13 @@ function App() {
     if (files.length === 0) {
       getFiles()
         .then((res) => {
-          setFiles(res);
+          setFiles(
+            res.sort((a: WeddingFile, b: WeddingFile) => {
+              const dateA = Date.parse(a.client_modified);
+              const dateB = Date.parse(b.client_modified);
+              return dateA - dateB;
+            })
+          );
         })
         .catch((err) => {
           console.error(err);
