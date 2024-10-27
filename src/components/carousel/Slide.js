@@ -55,9 +55,6 @@ function Slide({
     fetchData();
   }, []);
 
-  const offsetCardClick = (i) => {
-    console.log(i);
-  };
 
   const translateYoffset =
     50 * (Math.abs(offsetFromMiddle) / (offsetRadius + 1));
@@ -109,6 +106,7 @@ function Slide({
               <img
                 src={data}
                 alt={content}
+                title={content}
                 className="rounded border-white border-8"
               />
             ) : (

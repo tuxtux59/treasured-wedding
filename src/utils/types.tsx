@@ -33,3 +33,9 @@ export interface GroupedItems {
 export interface ThumbnailCache {
   [filePath: string]: string | ArrayBuffer | null;
 }
+
+export type ItemDisplay = 'carousel' |  'grid';
+export type ItemFilter = 'all' | 'pictures' | 'videos';
+
+// Language: Typescript;
+

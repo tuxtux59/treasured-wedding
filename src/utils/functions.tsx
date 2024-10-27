@@ -56,19 +56,23 @@ export const getThumbnails = (filePath: string, callback?: any) => {
       },
     }),
   };
-  return fetch(url + '?' + new URLSearchParams(params), {
-    method: 'POST',
-  })
-    .then((d) => d.body)
-    .then((body) => new Response(body))
-    .then((res) => res.blob())
-    .then((blob) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = () => {
-        const readerResult = reader.result;
-        thumbnailsCache[filePath] = readerResult;
-        callback(readerResult);
-      };
-    });
+  try {
+    return fetch(url + '?' + new URLSearchParams(params), {
+      method: 'POST',
+    })
+      .then((d) => d.body)
+      .then((body) => new Response(body))
+      .then((res) => res.blob())
+      .then((blob) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          const readerResult = reader.result;
+          thumbnailsCache[filePath] = readerResult;
+          callback(readerResult);
+        };
+      });
+  } catch (error) {
+    console.error(error);
+  }
 };
