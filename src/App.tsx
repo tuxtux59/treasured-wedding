@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 
 import {
@@ -19,6 +19,21 @@ function App() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [popupContent, setPopupContent] = useState<string | null>(null);
   const [popupPath, setPopupPath] = useState<string | undefined>();
+
+  const escFunction = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      setPopupContent(null);
+      setPopupPath(undefined);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', escFunction, false);
+
+    return () => {
+      document.removeEventListener('keydown', escFunction, false);
+    };
+  }, [escFunction]);
 
   useEffect(() => {
     const filteredFiles =
