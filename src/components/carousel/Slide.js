@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { Spring, animated } from 'react-spring/renderprops';
+import { Spring } from 'react-spring/renderprops';
 import { withGesture } from 'react-with-gesture';
 import { getThumbnails } from '../../utils/functions';
 
@@ -49,12 +49,11 @@ function Slide({
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [content]);
 
   useEffect(() => {
     fetchData();
-  }, []);
-
+  }, [fetchData]);
 
   const translateYoffset =
     50 * (Math.abs(offsetFromMiddle) / (offsetRadius + 1));

@@ -12,11 +12,11 @@ const GridItem = ({ id, name }: Props) => {
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     fetchData();
-  }, [id]);
+  }, [fetchData]);
 
   if (!data) return <></>;
 

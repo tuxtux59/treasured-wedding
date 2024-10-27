@@ -104,7 +104,7 @@ class VerticalCarousel extends Component {
     const { index } = this.state;
     let { offsetRadius } = this.props;
     offsetRadius = this.clampOffsetRadius(offsetRadius);
-    const presentableSlides = new Array();
+    const presentableSlides = [];
 
     for (let i = -offsetRadius; i < 1 + offsetRadius; i++) {
       presentableSlides.push(slides[this.modBySlidesLength(index + i)]);
