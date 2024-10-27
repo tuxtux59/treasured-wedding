@@ -20,12 +20,16 @@ function App() {
   const [filteredFiles, setFilteredFiles] = useState<WeddingFile[]>([]);
 
   useEffect(() => {
-    const filteredFiles = files.filter(({ name }) => {
-      if (filter === 'all') return true;
-      if (filter === 'pictures') return name.endsWith('png');
-      if (filter === 'videos') return !name.endsWith('png');
-      return false;
-    });
+    console.debug('files', files);
+    const filteredFiles =
+      files.length > 0
+        ? files.filter(({ name }) => {
+            if (filter === 'all') return true;
+            if (filter === 'pictures') return name.endsWith('png');
+            if (filter === 'videos') return !name.endsWith('png');
+            return false;
+          })
+        : [];
     console.debug(
       'filtering',
       filter,
@@ -155,26 +159,33 @@ function App() {
           className="w-full h-full overflow-hidden relative"
         >
           <div className="h-full w-full overflow-y-scroll bg-slate-200">
-            {itemDisplay === 'carousel' ? (
-              <VerticalCarousel
-                className="h-2/3 w-full overflow-y-scroll"
-                slides={slides.length > 0 ? slides : []}
-                offsetRadius={2}
-                showNavigation={true}
-                // config={config.gentle}
-              />
-            ) : (
+            {filteredFiles.length > 0 ? (
               <>
-                <p>Grid in progress</p>
+                {itemDisplay === 'carousel' ? (
+                  <VerticalCarousel
+                    className="h-2/3 w-full overflow-y-scroll"
+                    slides={slides.length > 0 ? slides : []}
+                    offsetRadius={2}
+                    showNavigation={true}
+                    // config={config.gentle}
+                  />
+                ) : (
+                  <>
+                    <p>Grid in progress</p>
+                  </>
+                )}
               </>
+            ) : (
+              <p>No files</p>
             )}
           </div>
         </div>
         <div
           id="bottom-bar"
-          className="w-full bg-blue-600 text-white tex-center"
+          className="w-full bg-blue-600 text-white tex-center h-11"
         >
-          {filteredFiles.length}/{files.length}
+          {filteredFiles.length > 0 &&
+            `${filteredFiles.length}/${files.length}`}
         </div>
       </div>
       {/* right Section */}
